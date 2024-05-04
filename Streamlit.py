@@ -1,52 +1,46 @@
 import pickle
 import streamlit as st
 
-# membaca model
+# Membaca model
 try:
     diabetes_model = pickle.load(open('random_forest_model.sav', 'rb'))
-    print("Model berhasil dimuat.")
+    st.success("Model berhasil dimuat.")
 except Exception as e:
-    print("Gagal memuat model:", e)
+    st.error("Gagal memuat model:", e)
 
-#judul web
+# Judul web
 st.title('Prediksi Penyakit Diabetes')
 
-#membagi kolom
+# Membagi kolom
 col1, col2 = st.columns(2)
 
-with col1 :
-    Pregnancies = st.text_input ('input nilai Pregnancies')
+# Input nilai untuk setiap fitur
+with col1:
+    Pregnancies = st.text_input('Pregnancies', type='number')
+    Glucose = st.text_input('Glucose', type='number')
+    BloodPressure = st.text_input('Blood Pressure', type='number')
+    SkinThickness = st.text_input('Skin Thickness', type='number')
 
-with col2 :
-    Glucose = st.text_input ('input nilai Glucose')
+with col2:
+    Insulin = st.text_input('Insulin', type='number')
+    BMI = st.text_input('BMI', type='number')
+    DiabetesPedigreeFunction = st.text_input('Diabetes Pedigree Function', type='number')
+    Age = st.text_input('Age', type='number')
 
-with col1 :
-    BloodPressure = st.text_input ('input nilai Blood Pressure')
-
-with col2 :
-    SkinThickness = st.text_input ('input nilai Skin Thickness')
-
-with col1 :
-    Insulin = st.text_input ('input nilai Insulin')
-
-with col2 :
-    BMI = st.text_input ('input nilai BMI')
-
-with col1 :
-    DiabetesPedigreeFunction = st.text_input ('input nilai Diabetes Pedigree Function')
-
-with col2 :
-    Age = st.text_input ('input nilai Age')
-
-# code untuk prediksi
+# Kode untuk prediksi
 diab_diagnosis = ''
 
-# membuat tombol untuk prediksi
+# Membuat tombol untuk prediksi
 if st.button('Test Prediksi Diabetes'):
-    diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
-
-    # Menampilkan hasil prediksi
-    if diab_prediction[0] == 1:
-        st.success('Pasien terkena Diabetes')
+    # Memastikan semua input adalah numerik
+    if not all([Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]):
+        st.error("Mohon isi semua kolom dengan angka.")
     else:
-        st.success('Pasien tidak terkena Diabetes')
+        # Melakukan prediksi
+        diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
+
+        # Menampilkan hasil prediksi
+        if diab_prediction[0] == 1:
+            st.success('Pasien terkena Diabetes.')
+        else:
+            st.success('Pasien tidak terkena Diabetes.')
